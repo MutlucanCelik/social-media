@@ -15,15 +15,18 @@ import './assets/vendor/dropzone/dist/min/dropzone.min.css'
 import './assets/vendor/choices.js/public/assets/styles/choices.min.css'
 import './assets/css/style.css'
 
-import { createApp } from 'vue'
-import { createPinia } from 'pinia'
+import { createApp } from 'vue';
+import App from './App.vue';
+import router from './router';
+import store from './store/index.js'
 
-import App from './App.vue'
-import router from './router'
+const app = createApp(App);
 
-const app = createApp(App)
+// Router'ı Vue uygulamasına ekleyin
+app.use(router);
 
-app.use(createPinia())
-app.use(router)
+// Vuex store'unu Vue uygulamasına ekleyin
+app.use(store);
 
-app.mount('#app')
+app.mount('#app');
+
