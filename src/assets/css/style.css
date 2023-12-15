@@ -16489,7 +16489,7 @@ a.badge:hover {
     height: calc(100vh - 5.1125rem - 1.5rem);
   }
   .card-chat-list {
-    height: calc(100vh - 10.112rem - 1.5rem);
+    height: calc(100vh - 10.112rem - 0.8rem);
   }
   .chat-conversation-content {
     height: calc(100% - 5.25rem);

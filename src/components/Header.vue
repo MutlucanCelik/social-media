@@ -3,16 +3,10 @@
     <nav class="navbar navbar-expand-lg">
       <div class="container">
         <RouterLink class="navbar-brand" :to="{ name: 'Index' }">
-          <img
-            class="light-mode-item navbar-brand-item"
-            src="../assets/images/logo.svg"
-            alt="logo"
-          />
-          <img
-            class="dark-mode-item navbar-brand-item"
-            src="../assets/images/logo.svg"
-            alt="logo"
-          />
+          <div class="logo-container">
+            <i class="fa-solid fa-house"></i>
+          </div>
+          
         </RouterLink>
 
         <button
@@ -272,4 +266,19 @@ export default {
 }
 </script>
 
-<style></style>
+<style>
+.logo-container{
+  background-color: #0E6EEC;
+  color: #fff;
+  width: 37px;
+  height: 37px;
+  border-radius: 5px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.logo-container svg{
+  font-size: 1rem;
+}
+</style>

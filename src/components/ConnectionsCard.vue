@@ -25,7 +25,7 @@
               </div>
               <div class="card-footer p-2 border-0">
                 <button
-                  class="btn btn-sm btn-primary"
+                  class="btn btn-sm btn-primary me-1"
                   data-bs-toggle="tooltip"
                   data-bs-placement="top"
                   title="Send message"
@@ -60,7 +60,7 @@
               </div>
               <div class="card-footer p-2 border-0">
                 <button
-                  class="btn btn-sm btn-primary"
+                  class="btn btn-sm btn-primary me-1"
                   data-bs-toggle="tooltip"
                   data-bs-placement="top"
                   title="Send message"
@@ -95,7 +95,7 @@
               </div>
               <div class="card-footer p-2 border-0">
                 <button
-                  class="btn btn-sm btn-primary"
+                  class="btn btn-sm btn-primary me-1"
                   data-bs-toggle="tooltip"
                   data-bs-placement="top"
                   title="Send message"
@@ -130,7 +130,7 @@
               </div>
               <div class="card-footer p-2 border-0">
                 <button
-                  class="btn btn-sm btn-primary"
+                  class="btn btn-sm btn-primary me-1"
                   data-bs-toggle="tooltip"
                   data-bs-placement="top"
                   title="Send message"
