@@ -170,7 +170,7 @@
                 >
               </li>
               <li class="dropdown-divider"></li>
-              <li>
+              <li @click="handleLogout">
                 <RouterLink :to="{ name: 'Login' }" class="dropdown-item bg-danger-soft-hover"
                   ><i class="bi bi-power fa-fw me-2"></i>Çıkış</RouterLink
                 >
@@ -260,7 +260,16 @@
 </template>
 
 <script>
-export default {}
+export default {
+
+  methods: {
+    handleLogout(){
+      console.log('Başarıyla Çıkış Yapıldı!')
+      localStorage.removeItem('tokenKey');
+      this.$router.push('/');
+    },
+  }
+}
 </script>
 
 <style></style>

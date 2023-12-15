@@ -719,18 +719,20 @@
               </p>
               <form class="mt-4" action="" method="">
                 <div class="mb-3 position-relative input-group-lg">
-                  <input type="email" class="form-control" placeholder="E-posta girin" />
+                  <input type="email" v-model="email" class="form-control" placeholder="E-posta girin" />
                 </div>
                 <div class="mb-3">
                   <div class="input-group input-group-lg">
                     <input
                       class="form-control fakepassword"
                       type="password"
+                      v-model="password"
                       id="psw-input"
                       placeholder="Şifrenizi girin"
                     />
                     <span class="input-group-text p-0">
                       <i
+                        @click="handleHidePassword"
                         class="fakepasswordicon fa-solid fa-eye-slash cursor-pointer p-2 w-40px"
                       ></i>
                     </span>
@@ -748,8 +750,8 @@
                 </div>
 
                 <div class="d-grid">
-                  <RouterLink :to="{ name: 'Index' }" class="btn btn-lg btn-primary-soft"
-                    >Giriş</RouterLink
+                  <div @click="handleLogin" class="btn btn-lg btn-primary-soft"
+                    >Giriş</div
                   >
                 </div>
 
@@ -798,8 +800,55 @@ import CopyRight from '@/components/CopyRight.vue'
 export default {
   name: 'Login',
 
+  data() {
+    email:'';
+    password:'';
+  },
+
   components: {
     CopyRight
+  },
+
+  methods:{
+    handleLogin(){
+      fetch("http://localhost:8000/api/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                email: this.email,
+                password: this.password,
+            }),
+        })
+        .then((res) => {
+        if (!res.ok) {
+            if (res.status === 401) {
+                // 401 Unauthorized durumu
+                console.log("Kullanıcı adı veya şifre yanlış");
+                // Diğer işlemleri buraya ekleyebilirsiniz, örneğin bir hata mesajı gösterme veya kullanıcıyı başka bir sayfaya yönlendirme
+            } else {
+                // Başka bir hata durumu
+                console.error("Bir hata oluştu: ", res.status);
+            }
+            throw new Error("HTTP Hatası");
+        }
+        return res.json();
+    })
+            .then((result) => {
+                localStorage.setItem("tokenKey", result.token);
+                console.log("başarıyla giriş yaptın!");
+                this.$router.push('/index');
+            }).catch((err) => console.log(err))
+    },
+
+    handleHidePassword(){
+      
+    },
+
+    login(){
+      
+    }
   }
 }
 </script>

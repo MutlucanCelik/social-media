@@ -14,19 +14,20 @@
 
             <form class="mt-4" action="" method="">
               <div class="mb-3 input-group-lg">
-                <input type="text" class="form-control" placeholder="Kullanıcı adı" />
+                <input v-model="username" type="text" class="form-control" placeholder="Kullanıcı adı" />
               </div>
               <div class="mb-3 input-group-lg">
-                <input type="email" class="form-control" placeholder="E-mail" />
+                <input v-model="email" type="email" class="form-control" placeholder="E-mail" />
               </div>
               <div class="mb-3 input-group-lg">
-                <input type="date" class="form-control" placeholder="E-mail" />
+                <input v-model="date_of_birth" type="date" class="form-control" placeholder="E-mail" />
               </div>
               <div class="mb-3 position-relative">
                 <div class="input-group input-group-lg">
                   <input
                     class="form-control fakepassword"
                     type="password"
+                    v-model="password"
                     id="psw-input"
                     placeholder="Şifre"
                   />
@@ -36,10 +37,10 @@
                 </div>
               </div>
               <div class="mb-3 input-group-lg">
-                <input class="form-control" type="password" placeholder="Şifreyi onay" />
+                <input v-model="repassword" class="form-control" type="password" placeholder="Şifreyi onay" />
               </div>
               <div class="d-grid">
-                <button type="submit" class="btn btn-lg btn-primary">Kayıt ol</button>
+                <a @click="handleRegister" class="btn btn-lg btn-primary">Kayıt ol</a>
               </div>
               <CopyRight />
             </form>
@@ -55,9 +56,50 @@ import CopyRight from '@/components/CopyRight.vue'
 export default {
   name: 'Register',
 
+  data(){
+    username:'';
+    email:'';
+    date_of_birth:'';
+    gender:'';
+    password:'';
+    repassword:'';
+  },
+
   components: {
     CopyRight
-  }
+  },
+
+  methods: {
+    handleRegister(){
+      if(this.password == this.repassword){
+        console.log('Şifreler doğru')
+        this.sendRegisterRequest();
+      }
+    },
+
+    sendRegisterRequest(){
+      console.log("Doğru");
+      fetch("http://localhost:8000/api/register", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                username: this.username,
+                email: this.email,
+                gender: 'Male',
+                date_of_birth: '2000/12/12',
+                password: this.password,
+            }),
+        })
+            .then((res) => res.json())
+            .then((result) => {
+                localStorage.setItem("tokenKey", result.token);
+                console.log("başarıyla kayıt yaptın!");
+                this.$router.push('/');
+            }).catch((err) => console.log(err))
+    }
+    },
 }
 </script>
 1

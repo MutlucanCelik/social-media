@@ -425,7 +425,11 @@ export default {
     FollowUpSuggestions,
     TodaysNews,
     Messaging
-  }
+  },
+
+  mounted(){
+    console.log(localStorage.getItem('tokenKey'))
+  },
 }
 </script>
 
