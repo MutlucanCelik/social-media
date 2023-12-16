@@ -183,6 +183,7 @@
                     >Giriş</div
                   >
                 </div>
+                <div id="error-message" class="d-none"></div>
 
                 <CopyRight />
               </form>
@@ -224,7 +225,9 @@ export default {
         if (!res.ok) {
             if (res.status === 401) {
                 // 401 Unauthorized durumu
-                console.log("Kullanıcı adı veya şifre yanlış");
+               const errorMessage = document.getElementById("error-message")
+               errorMessage.classList.remove("d-none")
+               errorMessage.innerText  = "Geçersiz mail veya şifre."
                 // Diğer işlemleri buraya ekleyebilirsiniz, örneğin bir hata mesajı gösterme veya kullanıcıyı başka bir sayfaya yönlendirme
             } else {
                 // Başka bir hata durumu
@@ -236,6 +239,8 @@ export default {
     })
             .then((result) => {
                 localStorage.setItem("tokenKey", result.token);
+                localStorage.setItem("username",result.user.username);
+                localStorage.setItem("userId",result.user.id);
                 console.log("başarıyla giriş yaptın!");
                 this.$router.push('/index');
             }).catch((err) => console.log(err))
@@ -265,6 +270,14 @@ export default {
   .card.card-body{
     height: 37rem;
   }
-
+  #error-message{
+    background-color: #F8D7DA;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 0.7rem;
+    padding:1rem;
+    color: #333;
+  }
 
 </style>

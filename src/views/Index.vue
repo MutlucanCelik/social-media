@@ -428,7 +428,9 @@ export default {
   },
 
   mounted(){
-    console.log(localStorage.getItem('tokenKey'))
+    console.log(localStorage.getItem('tokenKey'));
+    console.log(localStorage.getItem('userId'));
+    console.log(localStorage.getItem('username'));
   },
 }
 </script>
