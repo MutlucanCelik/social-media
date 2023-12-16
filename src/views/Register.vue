@@ -1,45 +1,82 @@
 <template>
-  <main>
+  <main class="position-relative" style="height: 100vh">
     <div class="container">
       <div class="row justify-content-center align-items-center vh-100 py-5">
         <div class="col-sm-10 col-md-8 col-lg-7 col-xl-6 col-xxl-5">
-          <div class="card card-body rounded-3 p-4 p-sm-5">
+          <div class="card card-body rounded-3 p-4 px-sm-5 pb-sm-5">
             <div class="text-center">
-              <h1 class="mb-2">Kayıt ol</h1>
+              <h1 class="mb-2 register-title">Kayıt ol</h1>
               <span class="d-block"
                 >Zaten hesabınız var mı ?
                 <RouterLink :to="{ name: 'Login' }">Oturum aç</RouterLink></span
               >
             </div>
 
-            <form class="mt-4" action="" method="">
-              <div class="mb-3 input-group-lg">
-                <input v-model="username" type="text" class="form-control" placeholder="Kullanıcı adı" />
-              </div>
-              <div class="mb-3 input-group-lg">
-                <input v-model="email" type="email" class="form-control" placeholder="E-mail" />
-              </div>
-              <div class="mb-3 input-group-lg">
-                <input v-model="date_of_birth" type="date" class="form-control" placeholder="E-mail" />
-              </div>
-              <div class="mb-3 position-relative">
-                <div class="input-group input-group-lg">
+            <form class="mt-4 row" action="" method="">
+              <div class="col-12">
+                <div class="mb-3 input-group-lg">
                   <input
-                    class="form-control fakepassword"
-                    type="password"
-                    v-model="password"
-                    id="psw-input"
-                    placeholder="Şifre"
+                    v-model="username"
+                    type="text"
+                    class="form-control"
+                    placeholder="Kullanıcı adı"
                   />
-                  <span class="input-group-text p-0">
-                    <i class="fakepasswordicon fa-solid fa-eye-slash cursor-pointer p-2 w-40px"></i>
-                  </span>
                 </div>
               </div>
-              <div class="mb-3 input-group-lg">
-                <input v-model="repassword" class="form-control" type="password" placeholder="Şifreyi onay" />
+              <div class="col-6 mb-3">
+                <div class="input-group-lg">
+                  <input v-model="first_name" type="text" class="form-control" placeholder="Ad" />
+                </div>
               </div>
-              <div class="d-grid">
+              <div class="col-6 mb-3">
+                <div class="input-group-lg">
+                  <input v-model="last_name" type="text" class="form-control" placeholder="Soyad" />
+                </div>
+              </div>
+              <div class="col-12">
+                <div class="mb-3 input-group-lg">
+                  <input v-model="email" type="email" class="form-control" placeholder="E-mail" />
+                </div>
+              </div>
+              <div class="col-12">
+                <div class="mb-3 input-group-lg">
+                  <input
+                    v-model="date_of_birth"
+                    type="date"
+                    class="form-control"
+                    placeholder="E-mail"
+                  />
+                </div>
+              </div>
+              <div class="col-12">
+                <div class="mb-3 position-relative">
+                  <div class="input-group input-group-lg">
+                    <input
+                      class="form-control fakepassword"
+                      type="password"
+                      v-model="password"
+                      id="psw-input"
+                      placeholder="Şifre"
+                    />
+                    <span class="input-group-text p-0">
+                      <i
+                        class="fakepasswordicon fa-solid fa-eye-slash cursor-pointer p-2 w-40px"
+                      ></i>
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12">
+                <div class="mb-3 input-group-lg">
+                  <input
+                    v-model="repassword"
+                    class="form-control"
+                    type="password"
+                    placeholder="Şifreyi onay"
+                  />
+                </div>
+              </div>
+              <div class="d-grid mb-2">
                 <a @click="handleRegister" class="btn btn-lg btn-primary">Kayıt ol</a>
               </div>
               <CopyRight />
@@ -52,55 +89,86 @@
 </template>
 
 <script>
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import CopyRight from '@/components/CopyRight.vue'
+
 export default {
   name: 'Register',
-
-  data(){
-    username:'';
-    email:'';
-    date_of_birth:'';
-    gender:'';
-    password:'';
-    repassword:'';
-  },
 
   components: {
     CopyRight
   },
 
-  methods: {
-    handleRegister(){
-      if(this.password == this.repassword){
-        console.log('Şifreler doğru')
-        this.sendRegisterRequest();
-      }
-    },
+  setup() {
+    const username = ref('')
+    const first_name = ref('')
+    const last_name = ref('')
+    const email = ref('')
+    const date_of_birth = ref('')
+    const gender = ref('')
+    const password = ref('')
+    const repassword = ref('')
+    const router = useRouter()
 
-    sendRegisterRequest(){
-      console.log("Doğru");
-      fetch("http://localhost:8000/api/register", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                username: this.username,
-                email: this.email,
-                gender: 'Male',
-                date_of_birth: '2000/12/12',
-                password: this.password,
-            }),
-        })
-            .then((res) => res.json())
-            .then((result) => {
-                localStorage.setItem("tokenKey", result.token);
-                console.log("başarıyla kayıt yaptın!");
-                this.$router.push('/');
-            }).catch((err) => console.log(err))
+    const handleRegister = () => {
+      if (password.value === repassword.value) {
+        sendRegisterRequest()
+      }
     }
-    },
+
+    const sendRegisterRequest = () => {
+      console.log('Doğru')
+      fetch('http://localhost:8000/api/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          username: username.value,
+          email: email.value,
+          first_name: first_name.value,
+          last_name: last_name.value,
+          date_of_birth: '2000/12/12',
+          gender : 'Male',
+          password: password.value
+        })
+      })
+        .then((res) => {
+           return res.json()
+        })
+        .then((result) => {
+          router.push('/')
+        })
+        .catch((err) => console.log(err))
+    }
+
+    return {
+      username,
+      email,
+      first_name,
+      last_name,
+      date_of_birth,
+      gender,
+      password,
+      repassword,
+      handleRegister
+    }
+  }
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.col-md-8 {
+  width: 55%;
+}
+.register-title {
+  font-size: 3rem;
+}
+.container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+</style>

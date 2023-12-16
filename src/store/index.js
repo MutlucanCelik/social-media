@@ -1,20 +1,31 @@
 
 import { createStore } from 'vuex'; // Vuex'i içe aktarın
+import { postWithAuth } from '../utils/service/HttpService';
 
 export default createStore({
     state: {
-      // Durumlarınızı buraya ekleyin
+      user : null,
     },
     mutations: {
-      // Mutasyonlarınızı buraya ekleyin
+      SET_USER(state, user) {
+        state.user = user;
+      },
+      
     },
     actions: {
-      // Aksiyonlarınızı buraya ekleyin
-    },
-    modules:{
-
+      async fetchUser({ commit }) {
+        try {
+          const userId = +localStorage.getItem("userId")
+          const user = await postWithAuth("users/get",{id : userId});
+          commit('SET_USER', user);
+        } catch (error) {
+          console.error('There has been a problem fetching the user:', error);
+        }
+      },
     },
     getters: {
-      // Getiricilerinizi buraya ekleyin
+      currentUser: state => {
+        return state.user
+      },
     },
   });

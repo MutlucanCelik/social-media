@@ -16,20 +16,24 @@ import './assets/vendor/choices.js/public/assets/styles/choices.min.css'
 import './assets/css/style.css'
 
 import { createApp } from 'vue'
-import { createPinia } from 'pinia'
 import NaiveUI from 'naive-ui'
 import App from './App.vue';
 import router from './router';
+import store from './store/index.js'
+
+
+
+
+
+
 
 const app = createApp(App);
-
+app.use(NaiveUI)
 // Router'ı Vue uygulamasına ekleyin
 app.use(router);
 
-app.use(createPinia())
-app.use(router)
-app.use(NaiveUI)
-
+// Vuex store'unu Vue uygulamasına ekleyin
+app.use(store);
 
 app.mount('#app');
 

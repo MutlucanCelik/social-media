@@ -1,4 +1,4 @@
-export const GetWithAuth = (url) => {
+export const getWithAuth = (url) => {
 
     var request = fetch("/api"+url,  {
         method: "GET",
@@ -13,7 +13,7 @@ export const GetWithAuth = (url) => {
 
 
 
-export const GetWithoutAuth = (url) => {
+export const getWithoutAuth = (url) => {
 
     var request = fetch(url,  {
         method: "GET",
@@ -26,21 +26,27 @@ export const GetWithoutAuth = (url) => {
 }
 
 
-export const PostWithAuth = (url, body) => {
-
-    var request = fetch("/api"+url,  {
-        method: "POST", 
+export const postWithAuth = (url, body) => {
+  console.log(body)
+    return fetch("http://127.0.0.1:8000/api/"+url,  {
+        method: "GET", 
         headers: {
           "Content-Type": "application/json",
           "Authorization" : localStorage.getItem("tokenKey"),
         },
         body : JSON.stringify(body),
+      }).then((response) => {
+        if (!response.ok) {
+          console.log('Kullanıcı Bilgisi Getirilemedi')
+        }
+        return response.json()
       })
-
-    return request
+      .catch((error) => {
+        console.error('There has been a problem with your fetch operation:', error)
+      })
 }
 
-export const PostWithoutAuth = (url, body) => {
+export const postWithoutAuth = (url, body) => {
 
     var request = fetch(url,  {
         method: "POST", 
@@ -49,12 +55,11 @@ export const PostWithoutAuth = (url, body) => {
         },
         body : JSON.stringify(body),
       })
-
     return request
 }
 
-export const PutWithAuth = (url, body) => {
-
+export const putWithAuth = (url, body) => {
+  
     var request = fetch("/api"+url,  {
         method: "PUT",
         headers: {

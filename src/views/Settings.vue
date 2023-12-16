@@ -1008,12 +1008,34 @@ Interested has all Devonshire difficulty gay assistance joy. Handsome met debati
 <script>
 import Header from '@/components/Header.vue'
 import CopyRight from '@/components/CopyRight.vue'
+import { useStore } from 'vuex'
+import { onMounted, ref } from 'vue'
 export default {
   name: 'Settings',
 
   components: {
     Header,
     CopyRight
+  },
+
+  setup() {
+    const store = useStore() // Vuex store'u alın
+
+    let currentUser = ref("") // Vuex getter'ını kullanarak kullanıcıyı alın
+    
+
+    onMounted(async() => {
+      await store.dispatch('fetchUser')
+      currentUser.value = store.getters.currentUser
+      console.log(currentUser.value)
+    })
+
+    
+
+
+    return {
+      currentUser // Component içinde kullanıcıyı dışarıya döndür
+    }
   }
 }
 </script>

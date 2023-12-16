@@ -146,11 +146,11 @@
                   Kayıt olmak için buraya tıklayın</RouterLink
                 >
               </p>
-              <form class="mt-4" action="" method="">
-                <div class="mb-3 position-relative input-group-lg">
+              <form class="mt-5">
+                <div class="mb-4 position-relative input-group-lg">
                   <input type="email" v-model="email" class="form-control" placeholder="E-posta girin" />
                 </div>
-                <div class="mb-3">
+                <div class="mb-4">
                   <div class="input-group input-group-lg">
                     <input
                       class="form-control fakepassword"
@@ -168,7 +168,7 @@
                   </div>
                 </div>
 
-                <div class="mb-3 d-sm-flex justify-content-between">
+                <!-- <div class="mb-3 d-sm-flex justify-content-between">
                   <div class="mb-3">
                     <input type="checkbox" class="form-check-input me-2" id="rememberCheck" />
                     <label class="form-check-label" for="rememberCheck">Beni hatırla ?</label>
@@ -176,16 +176,18 @@
                   <RouterLink :to="{ name: 'ForgotPassword' }"
                     >Parolanızı mı unuttunuz ?</RouterLink
                   >
-                </div>
+                </div> -->
 
                 <div class="d-grid">
                   <div @click="handleLogin" class="btn btn-lg btn-primary-soft"
                     >Giriş</div
                   >
                 </div>
-                <div id="error-message" class="d-none"></div>
+                <div id="error-message" :class="{ 'd-block': error, 'd-none': !error }" >
+                  Geçersiz mail veya şifre.
+                </div>
 
-                <CopyRight />
+                <CopyRight class="mt-5" />
               </form>
             </div>
           </div>
@@ -196,67 +198,63 @@
 </template>
 
 <script>
-import CopyRight from '@/components/CopyRight.vue'
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import CopyRight from '@/components/CopyRight.vue';
+
 export default {
   name: 'Login',
-
-  data() {
-    email:'';
-    password:'';
-  },
-
   components: {
     CopyRight
   },
+  setup() {
+    const email = ref('');
+    const password = ref('');
+    const error = ref(false);
+    const router = useRouter();
 
-  methods:{
-    handleLogin(){
+    const handleLogin = () => {
       fetch("http://localhost:8000/api/login", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                email: this.email,
-                password: this.password,
-            }),
-        })
-        .then((res) => {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: email.value,
+          password: password.value,
+        }),
+      })
+      .then((res) => {
         if (!res.ok) {
-            if (res.status === 401) {
-                // 401 Unauthorized durumu
-               const errorMessage = document.getElementById("error-message")
-               errorMessage.classList.remove("d-none")
-               errorMessage.innerText  = "Geçersiz mail veya şifre."
-                // Diğer işlemleri buraya ekleyebilirsiniz, örneğin bir hata mesajı gösterme veya kullanıcıyı başka bir sayfaya yönlendirme
-            } else {
-                // Başka bir hata durumu
-                console.error("Bir hata oluştu: ", res.status);
-            }
-            throw new Error("HTTP Hatası");
+          if (res.status === 401) {
+            error.value = true;
+          } else {
+            console.error("Bir hata oluştu: ", res.status);
+          }
+          throw new Error("HTTP Hatası");
         }
+        error.value = false;
         return res.json();
-    })
-            .then((result) => {
-                localStorage.setItem("tokenKey", result.token);
-                localStorage.setItem("username",result.user.username);
-                localStorage.setItem("userId",result.user.id);
-                console.log("başarıyla giriş yaptın!");
-                this.$router.push('/index');
-            }).catch((err) => console.log(err))
-    },
+      })
+      .then((result) => {
+        localStorage.setItem("tokenKey", result.token);
+        localStorage.setItem("username", result.user.username);
+        localStorage.setItem("userId", result.user.id);
+        console.log("başarıyla giriş yaptın!");
+        router.push('/index');
+      })
+      .catch((err) => console.log(err));
+    };
 
-    handleHidePassword(){
-      
-    },
-
-    login(){
-      
-    }
+    return {
+      email,
+      password,
+      error,
+      handleLogin,
+    };
   }
-}
+};
 </script>
-
 <style scoped>
   .login-title{
     font-size: 3rem;
