@@ -1,14 +1,21 @@
-export const getWithAuth = (url) => {
-
-    var request = fetch("/api"+url,  {
+export const getWithAuth = (url,token) => {
+ 
+    return fetch(`http://127.0.0.1:8000/api/${url}`,  {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          "Authorization" : localStorage.getItem("tokenKey"),
+          "Authorization" : token,
         },
+      }).then((response) => {
+        if (!response.ok) {
+          console.log('Kullanıcı Bilgisi Getirilemedi')
+          return
+        }
+        return response.json()
       })
-
-    return request
+      .catch((error) => {
+        console.error('Bir sorun oluştu:', error)
+      })
 }
 
 
@@ -26,27 +33,69 @@ export const getWithoutAuth = (url) => {
 }
 
 
-export const postWithAuth = (url, body) => {
-  console.log(body)
-    return fetch("http://127.0.0.1:8000/api/"+url,  {
-        method: "GET", 
+export const postWithAuth = (url, body,token) => {
+    var request = fetch(`http://127.0.0.1:8000/api/${url}`,  {
+        method: "POST", 
         headers: {
           "Content-Type": "application/json",
-          "Authorization" : localStorage.getItem("tokenKey"),
+          "Authorization" : token,
         },
         body : JSON.stringify(body),
       }).then((response) => {
         if (!response.ok) {
-          console.log('Kullanıcı Bilgisi Getirilemedi')
+          console.log('Kullanıcı Bilgisi gönderilmedi')
+          return
         }
         return response.json()
       })
       .catch((error) => {
-        console.error('There has been a problem with your fetch operation:', error)
+        console.error('Postta Bir sorun oluştu:', error)
       })
+
+    return request
+}
+export const updateUser = (url, formData, token) => {
+  return fetch(`http://127.0.0.1:8000/api/${url}`, {
+    method: "POST",
+    headers: {
+      "Authorization": token,
+    },
+    body: formData,
+  })
+  .then((response) => {
+    if (!response.ok) {
+      console.log('Kullanıcı Bilgisi gönderilmedi')
+      return;
+    }
+    return response.blob();
+  }).then(blob => console.log(blob))
+  .catch((error) => {
+    console.error('Postta Bir sorun oluştu:', error);
+  });
+};
+export const postItems = (url, token) => {
+  var request = fetch(`http://127.0.0.1:8000/api/${url}`,  {
+      method: "POST", 
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization" : token,
+      }
+    }).then((response) => {
+      if (!response.ok) {
+        console.log('Kullanıcı Bilgisi gönderilmedi')
+        return
+      }
+      return response.json()
+    })
+    .catch((error) => {
+      console.error('Postta Bir sorun oluştu:', error)
+    })
+
+  return request
 }
 
-export const postWithoutAuth = (url, body) => {
+
+export const PostWithoutAuth = (url, body) => {
 
     var request = fetch(url,  {
         method: "POST", 
@@ -55,6 +104,7 @@ export const postWithoutAuth = (url, body) => {
         },
         body : JSON.stringify(body),
       })
+
     return request
 }
 
@@ -73,7 +123,7 @@ export const putWithAuth = (url, body) => {
 }
 
 
-export const DeleteWithAuth = (url) => {
+export const deleteWithAuth = (url) => {
 
     var request = fetch("/api"+url,  {
         method: "DELETE",

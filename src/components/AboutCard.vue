@@ -7,21 +7,20 @@
 
       <div class="card-body position-relative pt-0">
         <p>
-          Lorem ipsum, dolor sit amet consectetur adipisicing elit. Deserunt nemo perferendis sequi
-          sit. Minus est libero ut natus eveniet, sapiente nemo itaque sit?
+          {{ currentUser.description || "Eminim harika birisiniz." }}
         </p>
 
         <ul class="list-unstyled mt-3 mb-0">
           <li class="mb-2">
             <i class="bi bi-calendar-date fa-fw pe-1"></i> Doğum:
-            <strong> 29 Nisan 1998 </strong>
+            <strong> {{ currentUser.date_of_birth }}</strong>
           </li>
           <li class="mb-2">
-            <i class="bi bi-heart fa-fw pe-1"></i> Durum: <strong> Bekar </strong>
+            <i class="fa-solid fa-mars-and-venus"></i> Cinsiye: <strong> {{currentUser.gender == 'Male' ? "Erkek" : 'Kadın'}} </strong>
           </li>
           <li>
             <i class="bi bi-envelope fa-fw pe-1"></i> Email:
-            <strong> mtlcnclk98@gmail.com </strong>
+            <strong> {{ currentUser.email }} </strong>
           </li>
         </ul>
       </div>
@@ -30,7 +29,25 @@
 </template>
 
 <script>
-export default {}
+import { useStore } from 'vuex'
+import { onMounted, ref } from 'vue'
+export default {
+  setup() {
+    const store = useStore() // Vuex store'u alın
+
+    let currentUser = ref("") // Vuex getter'ını kullanarak kullanıcıyı alın
+    
+
+    onMounted(async() => {
+      await store.dispatch('getUser')
+      currentUser.value = store.getters.currentUser
+    })
+    
+    return {
+      currentUser
+    }
+  }
+}
 </script>
 
 <style></style>

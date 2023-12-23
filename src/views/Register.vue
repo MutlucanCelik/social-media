@@ -106,7 +106,6 @@ export default {
     const last_name = ref('')
     const email = ref('')
     const date_of_birth = ref('')
-    const gender = ref('')
     const password = ref('')
     const repassword = ref('')
     const router = useRouter()
@@ -119,7 +118,7 @@ export default {
 
     const sendRegisterRequest = () => {
       console.log('Doğru')
-      fetch('http://localhost:8000/api/register', {
+      fetch('http://127.0.0.1:8000/api/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -129,15 +128,14 @@ export default {
           email: email.value,
           first_name: first_name.value,
           last_name: last_name.value,
-          date_of_birth: '2000/12/12',
-          gender : 'Male',
+          date_of_birth: date_of_birth.value,
           password: password.value
         })
       })
         .then((res) => {
            return res.json()
         })
-        .then((result) => {
+        .then(() => {
           router.push('/')
         })
         .catch((err) => console.log(err))
@@ -149,7 +147,6 @@ export default {
       first_name,
       last_name,
       date_of_birth,
-      gender,
       password,
       repassword,
       handleRegister

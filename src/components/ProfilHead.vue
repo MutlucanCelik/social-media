@@ -1,36 +1,35 @@
 <template>
+  <div id="modal_image">
+    <img
+      class="avatar-img rounded-circle border border-white border-3"
+      :src="currentUser.profile_photo_url"
+      alt="avatar"
+    />
+  </div>
   <div class="card">
     <div class="h-200px rounded-top bg-profil-image"></div>
     <div class="card-body py-0">
       <div class="d-sm-flex align-items-start text-center text-sm-start">
-        <div>
+        <div @click="showImg" id="img_container">
           <div class="avatar avatar-xxl mt-n5 mb-3">
             <img
               class="avatar-img rounded-circle border border-white border-3"
-              src="@/assets/images/avatar/07.jpg"
-              alt=""
+              :src="currentUser.profile_photo_url"
+              alt="avatar"
             />
           </div>
         </div>
         <div class="ms-sm-4 mt-sm-3">
           <h1 class="mb-0 h5">
-            Mutlucan Çelik <i class="bi bi-patch-check-fill text-success small"></i>
+            {{ currentUser.first_name + ' ' + currentUser.last_name }}
+            <i class="bi bi-patch-check-fill text-success small"></i>
           </h1>
-          <p>250 Bağlantı</p>
-        </div>
-        <div class="d-flex mt-3 justify-content-center ms-sm-auto">
-          <button class="btn btn-danger-soft me-2" type="button">
-            <i class="bi bi-pencil-fill pe-1"></i> Profili düzenle
-          </button>
+          <p>{{ currentUser.title }}</p>
         </div>
       </div>
       <ul class="list-inline mb-0 text-center text-sm-start mt-3 mt-sm-0">
         <li class="list-inline-item">
-          <i class="bi bi-briefcase me-1"></i> Frontend Web Developer
-        </li>
-        <li class="list-inline-item"><i class="bi bi-geo-alt me-1"></i> Elazığ/Merkez</li>
-        <li class="list-inline-item">
-          <i class="bi bi-calendar2-plus me-1"></i> 30 Kasım 2022 tarihinde katıldı
+          <i class="bi bi-calendar2-plus me-1"></i> {{ currentUser.created_at }} tarihinde katıldı
         </li>
       </ul>
     </div>
@@ -62,28 +61,55 @@
 </template>
 
 <script>
+import { useStore } from 'vuex'
+import { onMounted, ref } from 'vue'
+import avatar from '@/assets/images/avatar/user.jpeg'
 export default {
-  data() {
-    return {}
-  },
-  methods: {
-    toggleContent(content) {
-      this.$emit('toggleContent', content)
-    }
-  },
-  mounted() {
-    const profilHeadItems = document.querySelectorAll('.profil-head-item')
-    profilHeadItems.forEach((item) => {
-      item.addEventListener('click', function (e) {
-        profilHeadItems.forEach((link) => link.classList.remove('active'))
-        item.classList.add('active')
+  setup(_, { emit }) {
+    const store = useStore() // Vuex store'u alın
+    let currentUser = ref({}) // Vuex getter'ını kullanarak kullanıcıyı alın
+
+    onMounted(async () => {
+      await store.dispatch('getUser')
+      currentUser.value = store.getters.currentUser
+      currentUser.value.profile_photo_url = currentUser.value.profile_photo || avatar
+
+      const profilHeadItems = document.querySelectorAll('.profil-head-item')
+      profilHeadItems.forEach((item) => {
+        item.addEventListener('click', function (e) {
+          profilHeadItems.forEach((link) => link.classList.remove('active'))
+          item.classList.add('active')
+        })
       })
     })
+
+    const toggleContent = (content) => {
+      emit('toggleContent', content)
+    }
+
+    const showImg = () => {
+      const imgModal = document.getElementById('modal_image')
+      imgModal.classList.add('modal-active')
+    }
+
+    const handleKeyPress = (event) => {
+      if (event.key === 'Escape') {
+        const imgModal = document.getElementById('modal_image')
+        imgModal.classList.remove('modal-active')
+      }
+    }
+    window.addEventListener('keydown', handleKeyPress)
+
+    return {
+      currentUser,
+      toggleContent,
+      showImg // Component içinde kullanıcıyı dışarıya döndür
+    }
   }
 }
 </script>
 
-<style>
+<style scoped>
 .bg-profil-image {
   background-image: url('@/assets/images/bg/05.jpg');
   background-position: center;
@@ -92,5 +118,32 @@ export default {
 }
 .cursor-pointer {
   cursor: pointer;
+}
+
+#img_container {
+  cursor: pointer;
+}
+#modal_image {
+  width: 100%;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  left: 0;
+  top: 0;
+  display: none;
+  z-index: 10;
+}
+#modal_image img {
+  width: 25rem;
+  height: 25rem;
+}
+
+.modal-active {
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+}
+main {
+  position: relative !important;
 }
 </style>

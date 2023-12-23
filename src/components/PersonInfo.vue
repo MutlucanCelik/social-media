@@ -40,20 +40,20 @@
                   <a href="#!"
                     ><img
                       class="avatar-img rounded border border-white border-3"
-                      src="../assets/images/avatar/07.jpg"
-                      alt=""
+                      :src="avatar"
+                      alt="img"
                   /></a>
                 </div>
 
-                <h5 class="mb-0"><a href="#!">Mutlucan Çelik </a></h5>
-                <small>Frontend Web Developer</small>
-                <p class="mt-3">
-                  Dünya'yı değiştirmek isterdim ama bana kaynak kodunu vermiyorlar.
-                </p>
+                <h5 class="mb-0"><a href="#!">{{ user.first_name + ' ' + user.last_name }} </a></h5>
+                <small>{{ user.title }}</small>
+                <pre class="mt-3" style="font-family: var(--bs-body-font-family);">
+{{ user.description }}
+                </pre>
 
                 <div class="hstack gap-2 gap-xl-3 justify-content-center">
                   <div>
-                    <h6 class="mb-0">256</h6>
+                    <h6 class="mb-0">{{ postLength }}</h6>
                     <small>Paylaşım</small>
                   </div>
 
@@ -126,17 +126,31 @@
 import CopyRight from '@/components/CopyRight.vue'
 import Profil from '@/views/Profil.vue'
 import Settings from '@/views/Settings.vue'
+import avatar from '@/assets/images/avatar/user.jpeg'
+import { computed } from 'vue'
+import { useStore } from 'vuex'
 
 export default {
   name: 'PersonInfo',
+  props:["user"],
+
 
   components: {
     CopyRight,
     Profil,
-    Settings
+    Settings,
   },
-  methods: {}
+  setup(props) {
+    const store = useStore()
+    const postLength = computed(() => store.state.posts.length)
+    return{
+      avatar,
+      postLength
+    }
+  }
+ 
 }
+
 </script>
 
 <style></style>

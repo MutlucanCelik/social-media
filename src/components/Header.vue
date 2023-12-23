@@ -91,7 +91,7 @@
                         <div class="avatar text-center d-none d-sm-inline-block">
                           <img
                             class="avatar-img rounded-circle"
-                            src="../assets/images/avatar/01.jpg"
+                            :src="avatar"
                             alt=""
                           />
                         </div>
@@ -130,7 +130,7 @@
               data-bs-toggle="dropdown"
               aria-expanded="false"
             >
-              <img class="avatar-img rounded-2" src="../assets/images/avatar/07.jpg" alt="" />
+              <img class="avatar-img rounded-2" :src="avatar" alt="" />
             </a>
             <ul
               class="dropdown-menu dropdown-animation dropdown-menu-end pt-3 pb-0 small me-md-n3"
@@ -141,7 +141,7 @@
                   <div class="avatar me-3">
                     <img
                       class="avatar-img rounded-circle"
-                      src="../assets/images/avatar/07.jpg"
+                      :src="avatar"
                       alt="avatar"
                     />
                   </div>
@@ -254,14 +254,23 @@
 </template>
 
 <script>
+import { useRouter } from 'vue-router';
+import avatar from '@/assets/images/avatar/user.jpeg'
 export default {
-
-  methods: {
-    handleLogout(){
+  setup() {
+    const router = useRouter();
+    const handleLogout = () => {
       console.log('Başarıyla Çıkış Yapıldı!')
       localStorage.removeItem('tokenKey');
-      this.$router.push('/');
-    },
+      localStorage.removeItem('userId');
+      localStorage.removeItem("username");
+      router.push({name : "Login"});
+    }
+
+    return {
+      handleLogout,
+      avatar
+    }
   }
 }
 </script>

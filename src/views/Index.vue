@@ -5,7 +5,7 @@
       <div class="container">
         <div class="row g-4">
           <div class="col-lg-3">
-            <PersonInfo />
+            <PersonInfo :user="currentUser"/>
           </div>
           <div class="col-md-8 col-lg-6 vstack gap-4">
             <Story />
@@ -223,7 +223,9 @@ import PersonInfo from '@/components/PersonInfo.vue'
 import FollowUpSuggestions from '@/components/FollowUpSuggestions.vue'
 import TodaysNews from '@/components/TodaysNews.vue'
 import Messaging from '@/components/Messaging.vue'
-import "@/utils/pages/index.js"
+import  "@/utils/pages/index.js"
+import { useStore } from 'vuex'
+import { onMounted, ref } from 'vue'
 export default {
   name: 'Index',
 
@@ -237,6 +239,28 @@ export default {
     TodaysNews,
     Messaging
   },
+  setup() {
+    const store = useStore() // Vuex store'u alın
+
+    let currentUser = ref({})
+  
+    onMounted(async() => {
+      try {
+        console.log("giriş 1")
+        await store.dispatch('getUser')
+        currentUser.value = store.getters.currentUser
+        console.log("giriş 2")
+      } catch (error) {
+        console.error("Kullanıcı getirilirken bir hata oluştu:", error)
+      }
+    })
+
+  
+
+    return {
+      currentUser,
+    }
+  }
 
 
 }

@@ -1,6 +1,6 @@
 <template>
   <main>
-    <div class="bg-primary pt-5 pb-0 position-relative" style="height: 100vh;">
+    <div class="bg-primary pt-5 pb-0 position-relative" style="height: 100vh">
       <figure
         class="m-0 position-absolute top-50 start-50 translate-middle w-100 h-100 opacity-1 overflow-hidden"
       >
@@ -135,9 +135,7 @@
       </figure>
       <div class="container">
         <div class="row justify-content-center text-center">
-          <div class="col-12">
-            
-          </div>
+          <div class="col-12"></div>
           <div class="col-sm-10 col-md-8 col-lg-6 position-relative z-index-1">
             <div class="card card-body p-4 p-sm-5 mt-sm-n5 mb-n5">
               <h2 class="mb-2 login-title">Giriş</h2>
@@ -148,7 +146,12 @@
               </p>
               <form class="mt-5">
                 <div class="mb-4 position-relative input-group-lg">
-                  <input type="email" v-model="email" class="form-control" placeholder="E-posta girin" />
+                  <input
+                    type="email"
+                    v-model="login"
+                    class="form-control"
+                    placeholder="E-posta girin"
+                  />
                 </div>
                 <div class="mb-4">
                   <div class="input-group input-group-lg">
@@ -179,11 +182,9 @@
                 </div> -->
 
                 <div class="d-grid">
-                  <div @click="handleLogin" class="btn btn-lg btn-primary-soft"
-                    >Giriş</div
-                  >
+                  <div @click="handleLogin" class="btn btn-lg btn-primary-soft">Giriş</div>
                 </div>
-                <div id="error-message" :class="{ 'd-block': error, 'd-none': !error }" >
+                <div id="error-message" :class="{ 'd-block': error, 'd-none': !error }">
                   Geçersiz mail veya şifre.
                 </div>
 
@@ -198,9 +199,9 @@
 </template>
 
 <script>
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
-import CopyRight from '@/components/CopyRight.vue';
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import CopyRight from '@/components/CopyRight.vue'
 
 export default {
   name: 'Login',
@@ -208,74 +209,81 @@ export default {
     CopyRight
   },
   setup() {
-    const email = ref('');
-    const password = ref('');
-    const error = ref(false);
-    const router = useRouter();
+    const login = ref('')
+    const password = ref('')
+    const error = ref(false)
+    const router = useRouter()
+
+    const handleHidePassword = (e) => {
+      const passwordInput = document.getElementById('psw-input')
+      if (passwordInput.type === 'text') {
+        passwordInput.type = 'password'
+      } else {
+        passwordInput.type = 'text'
+      }
+    }
 
     const handleLogin = () => {
-      fetch("http://localhost:8000/api/login", {
-        method: "POST",
+      fetch('http://127.0.0.1:8000/api/auth/login', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          email: email.value,
-          password: password.value,
-        }),
+          login: login.value,
+          password: password.value
+        })
       })
-      .then((res) => {
-        if (!res.ok) {
-          if (res.status === 401) {
-            error.value = true;
-          } else {
-            console.error("Bir hata oluştu: ", res.status);
+        .then((res) => {
+          if (!res.ok) {
+            if (res.status === 401) {
+              error.value = true
+            } else {
+              console.error('Bir hata oluştu: ', res.status)
+            }
+            throw new Error('HTTP Hatası')
           }
-          throw new Error("HTTP Hatası");
-        }
-        error.value = false;
-        return res.json();
-      })
-      .then((result) => {
-        localStorage.setItem("tokenKey", result.token);
-        localStorage.setItem("username", result.user.username);
-        localStorage.setItem("userId", result.user.id);
-        console.log("başarıyla giriş yaptın!");
-        router.push('/index');
-      })
-      .catch((err) => console.log(err));
-    };
+          error.value = false
+          return res.json()
+        })
+        .then((result) => {
+          localStorage.setItem('username', result.user.username)
+          localStorage.setItem('tokenKey', result.token)
+          router.push({ name: 'Index' })
+        })
+        .catch((err) => console.log(err))
+    }
 
     return {
-      email,
+      login,
       password,
       error,
       handleLogin,
-    };
+      handleHidePassword
+    }
   }
-};
+}
 </script>
 <style scoped>
-  .login-title{
-    font-size: 3rem;
-  }
-  .container{
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%,-50%);
-  }
-  .card.card-body{
-    height: 37rem;
-  }
-  #error-message{
-    background-color: #F8D7DA;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 0.7rem;
-    padding:1rem;
-    color: #333;
-  }
-
+.login-title {
+  font-size: 3rem;
+}
+.container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.card.card-body {
+  height: 37rem;
+}
+#error-message {
+  background-color: #f8d7da;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 0.7rem;
+  padding: 1rem;
+  color: #333;
+}
 </style>

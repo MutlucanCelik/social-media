@@ -3,17 +3,19 @@
     <div class="d-flex mb-3">
       <div class="avatar avatar-xs me-2">
         <a href="#">
-          <img class="avatar-img rounded-circle" src="../assets/images/avatar/03.jpg" alt="" />
+          <img class="avatar-img rounded-circle" :src="avatar" alt="" />
         </a>
       </div>
 
-      <form class="w-100">
+      <form class="w-100 position-relative" @submit.prevent="handleSubmit">
         <textarea
           class="form-control pe-4 border-0"
           rows="2"
           data-autoresize
           placeholder="Düşüncelerini paylaş..."
+          v-model="post_text"
         ></textarea>
+        <button class="btn btn-success btn-sm" type="submit">Paylaş</button>
       </form>
     </div>
 
@@ -39,11 +41,45 @@
         >
       </li>
     </ul>
+    
   </div>
 </template>
 
 <script>
-export default {}
+import {  ref } from 'vue'
+import { useStore } from 'vuex'
+import avatar from '@/assets/images/avatar/user.jpeg'
+export default {
+  setup() {
+    const store = useStore() // Vuex store'u alın
+    let post_text = ref("")
+
+
+    const handleSubmit = async() => {
+      let formData = {
+        post_text: post_text.value
+      }
+      store.dispatch('createPost', formData)
+      await store.dispatch('getPosts')
+      post_text.value = ""
+    }
+    return {
+      handleSubmit,
+      post_text ,
+      avatar
+    }
+  }
+}
 </script>
 
-<style></style>
+<style scoped>
+.card-body{
+  flex: initial;
+}
+.btn-success{
+  position: absolute;
+  right: 0px;
+  bottom: -45px;
+  --bs-btn-padding-y:0.25rem;
+}
+</style>
