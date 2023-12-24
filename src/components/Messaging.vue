@@ -347,8 +347,9 @@
     </div>
   </div>
 </template>
-
 <script>
+import  "@/utils/pages/index.js"
+
   export default {}
 </script>
 

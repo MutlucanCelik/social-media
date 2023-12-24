@@ -6,17 +6,17 @@
       </div>
 
       <div class="card-body position-relative pt-0">
-        <p>
-          {{ currentUser.description || "Eminim harika birisiniz." }}
-        </p>
+        <pre style="font-family: var(--bs-body-font-family);">
+{{ currentUser.description || "Eminim harika birisiniz." }}
+        </pre>
 
-        <ul class="list-unstyled mt-3 mb-0">
+        <ul class="list-unstyled mb-0">
           <li class="mb-2">
             <i class="bi bi-calendar-date fa-fw pe-1"></i> Doğum:
             <strong> {{ currentUser.date_of_birth }}</strong>
           </li>
           <li class="mb-2">
-            <i class="fa-solid fa-mars-and-venus"></i> Cinsiye: <strong> {{currentUser.gender == 'Male' ? "Erkek" : 'Kadın'}} </strong>
+            <i class="fa-solid fa-mars-and-venus"></i> Cinsiye: <strong> {{currentUser.gender === 'Male' ? 'Erkek' : (gender === 'Female' ? 'Kadın' : '-')}} </strong>
           </li>
           <li>
             <i class="bi bi-envelope fa-fw pe-1"></i> Email:

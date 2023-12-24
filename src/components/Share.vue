@@ -15,6 +15,7 @@
           placeholder="Düşüncelerini paylaş..."
           v-model="post_text"
         ></textarea>
+        <input id="post_image"  type="file" class="d-none">
         <button class="btn btn-success btn-sm" type="submit">Paylaş</button>
       </form>
     </div>
@@ -22,10 +23,8 @@
     <ul class="nav nav-pills nav-stack small fw-normal">
       <li class="nav-item">
         <a
+          @click="handleAddImage"
           class="nav-link bg-light py-1 px-2 mb-0"
-          href="#!"
-          data-bs-toggle="modal"
-          data-bs-target="#feedActionPhoto"
         >
           <i class="bi bi-image-fill text-success pe-2"></i>Fotoğraf</a
         >
@@ -53,20 +52,34 @@ export default {
   setup() {
     const store = useStore() // Vuex store'u alın
     let post_text = ref("")
+    let media_share = ref("")
 
+
+    const handleAddImage = () => {
+      document.getElementById("post_image").click()
+    }
 
     const handleSubmit = async() => {
+      const postImage = document.getElementById("post_image")
       let formData = {
         post_text: post_text.value
       }
+      console.log(postImage.files[0])
+      if(postImage.value){
+        formData.media_share = postImage.files[0]
+      }
+      console.log(formData)
       store.dispatch('createPost', formData)
       await store.dispatch('getPosts')
       post_text.value = ""
+      postImage.value = ""
     }
+    
     return {
       handleSubmit,
       post_text ,
-      avatar
+      avatar,
+      handleAddImage
     }
   }
 }

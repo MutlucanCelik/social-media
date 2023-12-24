@@ -68,7 +68,7 @@ export const updateUser = (url, formData, token) => {
       return;
     }
     return response.blob();
-  }).then(blob => console.log(blob))
+  })
   .catch((error) => {
     console.error('Postta Bir sorun oluştu:', error);
   });

@@ -57,7 +57,7 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('tokenKey');
 
-  if (to.path === '/' || to.path === '/register') {
+  if (to.path === '/' || to.path === '/register' || to.path === '/forgot-password') {
     if (token !== null) {
       next('/index'); // veya başka bir sayfa
     } else {

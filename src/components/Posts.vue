@@ -63,14 +63,16 @@
                 <img class="avatar-img rounded-circle" src="../assets/images/avatar/12.jpg" alt="" />
               </a>
             </div>
-            <form class="nav nav-item w-100 position-relative">
+            <form @submit.prevent="createComment(post.uuid)" class="nav nav-item w-100 position-relative">
               <textarea
                 data-autoresize
                 class="form-control pe-5 bg-light"
                 rows="1"
                 placeholder="Yorum ekle..."
+                v-model="comment"
               ></textarea>
               <button
+
                 class="nav-link bg-transparent px-3 position-absolute top-50 end-0 translate-middle-y border-0"
                 type="submit"
               >
@@ -240,9 +242,13 @@ export default {
   setup() {
     const store = useStore() // Vuex store'u alın
     let posts = computed(() => store.state.posts)
+    let comments = computed(() => store.state.comments)
+    let comment = ref("")
 
     onMounted(async () => {
+      await store.dispatch('getComment')
       await store.dispatch('getPosts')
+      
     })
     
 
@@ -268,11 +274,36 @@ export default {
               console.error('Bir hata oluştu:', error);
           });
     }
+    const createComment = (id) => {
+  
+      fetch(`http://127.0.0.1:8000/api/comment/create?post_id=${id}&comment_text=${comment.value}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          "Authorization" : "Bearer " + localStorage.getItem("tokenKey"),
+        }
+      })
+        .then(response => {
+          if (response.ok) {
+            comment.value = ""
+            return response.json();
+          }else{
+            throw new Error('Network response was not ok');
+          }
+          
+        })
+        .catch(error => {
+          console.error('Hata:', error);
+        });
 
+    }
 
     return {
       posts,
-      removePost,avatar
+      removePost,avatar,
+      createComment,
+      comment,
+      comments
     }
   }
 }

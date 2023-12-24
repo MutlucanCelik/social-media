@@ -7,7 +7,8 @@
           <div class="col-sm-6 vstack gap-4">
             <div class="tab-content py-0 mb-0">
               <div class="tab-pane show active fade" id="nav-setting-tab-1">
-                <div class="card mb-4">
+                <div class="card mb-4 position-relative">
+                  <Toast />
                   <div class="card-header border-0 pb-0">
                     <h1 class="h5 card-title">Kullanıcı Bilgileri</h1>
                   </div>
@@ -82,7 +83,7 @@
                       <div class="col-sm-6">
                         <label class="form-label">Cinsiyet</label>
                         <select class="form-select" name="gender" id="gender" v-model="currentUser.gender">
-                            <option v-if="currentUser.gender" value="" :selected="currentUser.gender === ''">Cinsiyet seçin</option>
+                            <option v-if="!currentUser.gender"  value="" :selected="currentUser.gender === ''">Cinsiyet seçin</option>
                             <option value="Male" :selected="currentUser.gender === 'Male'">Erkek</option>
                             <option value="Female" :selected="currentUser.gender === 'Female'">Kadın</option>
                         </select>
@@ -94,7 +95,7 @@
                           class="form-control"
                           placeholder=""
                           v-model="currentUser.email"
-                          
+                          readonly
                         />
                       </div>
                       <div class="col-12">
@@ -118,27 +119,35 @@
                     <h5 class="card-title">Şifre Değiştir</h5>
                   </div>
                   <div class="card-body">
-                    <form class="row g-3">
+                    <form @submit.prevent="handeleResetPassword" class="row g-3">
                       <div class="col-12">
-                        <label class="form-label">Şifre</label>
-                        <input type="text" class="form-control" placeholder="" />
+                        <label class="form-label">Email</label>
+                        <input type="mail" class="form-control" v-model="currentUser.email" name="email" readonly/>
                       </div>
                       <div class="col-12">
-                        <label class="form-label">Yeni şifre</label>
+                        <label class="form-label">Şifre</label>
                         <div class="input-group">
-                          <input class="form-control fakepassword" type="password" id="psw-input" />
-                          <span class="input-group-text p-0">
+                          <input v-model="password" class="form-control fakepassword" type="password" id="psw-input" name="password"/>
+                          <span @click="handleHidePassword('psw-input','icon')" class="input-group-text p-0">
                             <i
+                            id="icon"
                               class="fakepasswordicon fa-solid fa-eye-slash cursor-pointer p-2 w-40px"
                             ></i>
                           </span>
                         </div>
-                        <div id="pswmeter" class="mt-2"></div>
-                        <div id="pswmeter-message" class="rounded mt-1"></div>
+                    
                       </div>
                       <div class="col-12">
                         <label class="form-label">Şifre kontrol</label>
-                        <input type="text" class="form-control" placeholder="" />
+                        <div class="input-group">
+                          <input v-model="password_confirmation" id="psw-input2" type="password" class="form-control" placeholder=""  name="password_confirmation" />
+                          <span @click="handleHidePassword('psw-input2','icon2')" class="input-group-text p-0">
+                            <i
+                            id="icon2"
+                              class="fakepasswordicon fa-solid fa-eye-slash cursor-pointer p-2 w-40px"
+                            ></i>
+                          </span>
+                        </div>
                       </div>
                       <div class="col-12 text-end">
                         <button type="submit" class="btn btn-primary mb-0">Kaydet</button>
@@ -158,23 +167,26 @@
 <script>
 import Header from '@/components/Header.vue'
 import CopyRight from '@/components/CopyRight.vue'
+import Toast from '@/components/Toast.vue'
 import moment from 'moment'
 import { useStore } from 'vuex'
 import { onMounted, ref } from 'vue'
-import { useRouter } from 'vue-router'
 import avatar from '@/assets/images/avatar/user.jpeg'
 export default {
   name: 'Settings',
 
   components: {
+    Toast,
     Header,
     CopyRight
+    
   },
 
   setup() {
     const store = useStore() // Vuex store'u alın
-    const router = useRouter()
-    let currentUser = ref({}) // Vuex getter'ını kullanarak kullanıcıyı alın
+    let currentUser = ref({})
+    let password = ref("");
+    let password_confirmation = ref("");
 
     onMounted(async () => {
       await store.dispatch('getUser')
@@ -207,19 +219,63 @@ export default {
       if(currentUser.value.gender){
         formData.gender = currentUser.value.gender
       }
-      console.log(formData)
       store.dispatch('postUser', formData)
       
         .then(() => {
           localStorage.setItem('username', currentUser.value.username)
-          
-          router.push('/index')
+          $('#toast').toast('show')
+       
         })
         .catch((error) => {
           console.error('Post işlemi sırasında bir hata oluştu:', error)
         })
     }
+    const handeleResetPassword = () => {
+      let formData = {
+        email : currentUser.value.email,
+        password : password.value,
+        password_confirmation : password_confirmation.value
+      }
+      if(formData.password === formData.password_confirmation){
+        fetch('http://127.0.0.1:8000/api/auth/reset-password', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            "Authorization" : "Bearer " + localStorage.getItem("tokenKey"),
+          },
+          body: JSON.stringify(formData),
+        })
+          .then(response => {
+            if (response.ok) {
+              password.value = ""
+              password_confirmation.value = ""
+              return response.json();
+              
+            }else{
+              throw new Error('Network response was not ok');
+            }
+            
+          })
+          .catch(error => {
+            console.error('Hata:', error);
+          });
 
+      }
+    }
+    const handleHidePassword = (input,i) => {
+      const passwordInput = document.getElementById(input)
+      const icon = document.getElementById(i)
+      if (passwordInput.type === 'text') {
+        passwordInput.type = 'password';
+        icon.classList.add("fa-eye-slash")
+        icon.classList.remove("fa-eye")
+      } 
+      else{
+        passwordInput.type = 'text'
+        icon.classList.add("fa-eye")
+        icon.classList.remove("fa-eye-slash")
+      }
+    }
     const hadleFileEdit = () => {
       const imgInput = document.getElementById('img_input')
       imgInput.click()
@@ -231,6 +287,10 @@ export default {
       currentUser,
       handleSettingSubmit,
       hadleFileEdit,
+      handeleResetPassword,
+      password,
+      password_confirmation,
+      handleHidePassword
     }
   }
 }

@@ -162,16 +162,16 @@
                       id="psw-input"
                       placeholder="Şifrenizi girin"
                     />
-                    <span class="input-group-text p-0">
+                    <span @click="handleHidePassword"  class="input-group-text p-0">
                       <i
-                        @click="handleHidePassword"
+                      id="icon"
                         class="fakepasswordicon fa-solid fa-eye-slash cursor-pointer p-2 w-40px"
                       ></i>
                     </span>
                   </div>
                 </div>
 
-                <!-- <div class="mb-3 d-sm-flex justify-content-between">
+                 <div class="mb-3 d-sm-flex justify-content-between">
                   <div class="mb-3">
                     <input type="checkbox" class="form-check-input me-2" id="rememberCheck" />
                     <label class="form-check-label" for="rememberCheck">Beni hatırla ?</label>
@@ -179,7 +179,7 @@
                   <RouterLink :to="{ name: 'ForgotPassword' }"
                     >Parolanızı mı unuttunuz ?</RouterLink
                   >
-                </div> -->
+                </div>
 
                 <div class="d-grid">
                   <div @click="handleLogin" class="btn btn-lg btn-primary-soft">Giriş</div>
@@ -216,10 +216,16 @@ export default {
 
     const handleHidePassword = (e) => {
       const passwordInput = document.getElementById('psw-input')
+      const icon = document.getElementById("icon")
       if (passwordInput.type === 'text') {
-        passwordInput.type = 'password'
-      } else {
+        passwordInput.type = 'password';
+        icon.classList.add("fa-eye-slash")
+        icon.classList.remove("fa-eye")
+      } 
+      else {
         passwordInput.type = 'text'
+        icon.classList.add("fa-eye")
+        icon.classList.remove("fa-eye-slash")
       }
     }
 

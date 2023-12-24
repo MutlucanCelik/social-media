@@ -33,8 +33,8 @@ export default createStore({
       SET_POSTS(state,post){
         state.posts.push(post)
       },
-      SET_COMMENT(state,comment){
-        state.comments.push(comment)
+      SET_COMMENTS(state,comments){
+        state.comments.push(comments)
       },
 
       GET_POSTS(state,posts){
@@ -54,7 +54,6 @@ export default createStore({
           commit('SET_USER', user);
         } catch (error) {
           console.error('There has been a problem fetching the user:', error.message);
-          // Örneğin: 'Kullanıcı bilgileri getirilirken bir hata oluştu.'
         }
       },
     
@@ -69,18 +68,6 @@ export default createStore({
           commit('SET_USER', updatedUser);
         } catch (error) {
           console.error('There has been a problem updating the user:', error.message);
-          // Örneğin: 'Kullanıcı bilgileri güncellenirken bir hata oluştu.'
-        }
-      },
-
-      async passwordUpdate({ commit }, body) {
-        try {
-          const token = "Bearer " + localStorage.getItem("tokenKey")
-          const updatedUser = await postWithAuth(`auth/reset-password`, body, token);
-          commit('SET_USER', updatedUser);
-        } catch (error) {
-          console.error('There has been a problem updating the user:', error.message);
-          //Örneğin: 'Kullanıcı bilgileri güncellenirken bir hata oluştu.'
         }
       },
 
@@ -94,7 +81,7 @@ export default createStore({
           throw new Error('Hata : ',error.message);
         }
       },
-      async getPosts({ commit }) {
+      async getPosts({ commit,state }) {
         try {
           const token = "Bearer " + localStorage.getItem("tokenKey")
           const posts = await postItems(`posts/user`, token);
@@ -104,10 +91,17 @@ export default createStore({
             let date = new Date(item.created_at)
             const differenceInMilliseconds = currentDate - date;
             const differenceInSeconds = differenceInMilliseconds / 1000; // Milisaniyeyi saniyeye çevir
-            const minutesPassed = Math.floor(differenceInSeconds / 60);
-            console.log(minutesPassed)
-            item.created_at = minutesPassed == 0 ? 1 + " dakika önce":  minutesPassed+" dakika önce"
+            let minutesPassed = Math.floor(differenceInSeconds / 60);
+            if(minutesPassed > 60){
+              let hour = Math.floor(minutesPassed/60);
+              minutesPassed = hour + " saat önce"
+            }else{
+              minutesPassed = minutesPassed == 0 ? 1 + " dakika önce":  minutesPassed+" dakika önce"
+            }
+            item.created_at = minutesPassed
+            item.comments = state.comments
           })
+          
           commit('GET_POSTS', posts.data.posts);
         } catch (error) {
           throw new Error('Hata : ',error.message);
@@ -128,6 +122,16 @@ export default createStore({
           throw new Error('Hata : ',error.message);
         }
       },
+      async getComment ({commit}){
+        try {
+          const token = "Bearer " + localStorage.getItem("tokenKey")
+          const comments = await postItems(`comment/user-comment`,token);
+          commit('SET_COMMENTS', comments.data.comments);
+        } catch (error) {
+          throw new Error('Hata : ',error.message);
+        }
+      }
+
     },    
     getters: {
       currentUser: state => {

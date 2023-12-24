@@ -58,8 +58,8 @@
                       id="psw-input"
                       placeholder="Şifre"
                     />
-                    <span class="input-group-text p-0">
-                      <i
+                    <span @click="handleHidePassword('psw-input','icon')" class="input-group-text p-0">
+                      <i id="icon"
                         class="fakepasswordicon fa-solid fa-eye-slash cursor-pointer p-2 w-40px"
                       ></i>
                     </span>
@@ -67,13 +67,19 @@
                 </div>
               </div>
               <div class="col-12">
-                <div class="mb-3 input-group-lg">
+                <div class="mb-3 input-group input-group-lg">
                   <input
+                    id="psw-input2"
                     v-model="repassword"
                     class="form-control"
                     type="password"
                     placeholder="Şifreyi onay"
                   />
+                  <span @click="handleHidePassword('psw-input2','icon2')" class="input-group-text p-0">
+                      <i id="icon2"
+                        class="fakepasswordicon fa-solid fa-eye-slash cursor-pointer p-2 w-40px"
+                      ></i>
+                    </span>
                 </div>
               </div>
               <div class="d-grid mb-2">
@@ -116,8 +122,22 @@ export default {
       }
     }
 
+    const handleHidePassword = (input,i) => {
+      const passwordInput = document.getElementById(input)
+      const icon = document.getElementById(i)
+      if (passwordInput.type === 'text') {
+        passwordInput.type = 'password';
+        icon.classList.add("fa-eye-slash")
+        icon.classList.remove("fa-eye")
+      } 
+      else{
+        passwordInput.type = 'text'
+        icon.classList.add("fa-eye")
+        icon.classList.remove("fa-eye-slash")
+      }
+    }
+
     const sendRegisterRequest = () => {
-      console.log('Doğru')
       fetch('http://127.0.0.1:8000/api/auth/register', {
         method: 'POST',
         headers: {
@@ -133,10 +153,13 @@ export default {
         })
       })
         .then((res) => {
-           return res.json()
-        })
-        .then(() => {
-          router.push('/')
+          if(res.ok){
+            router.push('/')
+            return res.json()
+          }else{
+            console.log("kayıt oluşturulmadı")
+          }
+          
         })
         .catch((err) => console.log(err))
     }
@@ -149,7 +172,8 @@ export default {
       date_of_birth,
       password,
       repassword,
-      handleRegister
+      handleRegister,
+      handleHidePassword
     }
   }
 }

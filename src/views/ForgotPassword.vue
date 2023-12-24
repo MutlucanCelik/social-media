@@ -11,20 +11,18 @@
                 <div class="input-group input-group-lg">
                   <input
                     class="form-control fakepassword"
-                    type="password"
+                    type="mail"
                     id="psw-input"
                     placeholder="E-posta girin"
                   />
-                  <span class="input-group-text p-0">
-                    <i class="fakepasswordicon fa-solid fa-eye-slash cursor-pointer p-2 w-40px"></i>
-                  </span>
                 </div>
               </div>
-              <div class="mb-3">
-                <p>Tekrar <RouterLink :to="{ name: 'Register' }">kayıt ol</RouterLink></p>
-              </div>
+             
               <div class="d-grid">
                 <button type="submit" class="btn btn-lg btn-primary">Şifreyi sıfırla</button>
+              </div>
+              <div class="my-3">
+                <p>Tekrar <RouterLink :to="{ name: 'Register' }">Kayıt Ol</RouterLink></p>
               </div>
               <CopyRight />
             </form>
@@ -42,12 +40,14 @@ export default {
 
   components: {
     CopyRight
-  }
+  },
+
+ 
 }
 </script>
 
 <style scoped>
 .forgot-password-text {
-  font-size: 1.7rem;
+  font-size: 1.5rem;
 }
 </style>
