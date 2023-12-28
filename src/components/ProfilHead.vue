@@ -2,7 +2,7 @@
   <div id="modal_image">
     <img
       class="avatar-img rounded-circle border border-white border-3"
-      :src="currentUser.profile_photo_url"
+      :src="userImage"
       alt="avatar"
     />
   </div>
@@ -14,7 +14,7 @@
           <div class="avatar avatar-xxl mt-n5 mb-3">
             <img
               class="avatar-img rounded-circle border border-white border-3"
-              :src="currentUser.profile_photo_url"
+              :src="userImage"
               alt="avatar"
             />
           </div>
@@ -62,12 +62,13 @@
 
 <script>
 import { useStore } from 'vuex'
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import avatar from '@/assets/images/avatar/user.jpeg'
 export default {
   setup(_, { emit }) {
-    const store = useStore() // Vuex store'u alın
-    let currentUser = ref({}) // Vuex getter'ını kullanarak kullanıcıyı alın
+    const store = useStore();
+    let currentUser = ref({});
+    const userImage = computed(() => store.state.userImage || avatar)
 
     onMounted(async () => {
       await store.dispatch('getUser')
@@ -103,7 +104,8 @@ export default {
     return {
       currentUser,
       toggleContent,
-      showImg // Component içinde kullanıcıyı dışarıya döndür
+      showImg,
+      userImage
     }
   }
 }

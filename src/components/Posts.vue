@@ -9,7 +9,7 @@
                 <a href="#!">
                   <img
                     class="avatar-img rounded-circle"
-                    :src="avatar"
+                    :src="post.user.profile_photo_url"
                     alt=""
                   />
                 </a>
@@ -241,14 +241,19 @@ import avatar from '@/assets/images/avatar/user.jpeg'
 export default {
   setup() {
     const store = useStore() // Vuex store'u alın
-    let posts = computed(() => store.state.posts)
+    let posts = computed(() => {
+      store.state.posts.forEach(post => {
+        console.log(post.user.profile_photo_url)
+        post.user.profile_photo_url = post.user.profile_photo_url || avatar
+      });
+      return store.state.posts
+    })
     let comments = computed(() => store.state.comments)
     let comment = ref("")
 
     onMounted(async () => {
       await store.dispatch('getComment')
       await store.dispatch('getPosts')
-      
     })
     
 

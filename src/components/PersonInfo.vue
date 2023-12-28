@@ -40,7 +40,7 @@
                   <a href="#!"
                     ><img
                       class="avatar-img rounded border border-white border-3"
-                      :src="avatar"
+                      :src="userImage"
                       alt="img"
                   /></a>
                 </div>
@@ -143,9 +143,10 @@ export default {
   setup(props) {
     const store = useStore()
     const postLength = computed(() => store.state.posts.length)
+    const userImage = computed(() => store.state.userImage || avatar)
     return{
-      avatar,
-      postLength
+      postLength,
+      userImage
     }
   }
  

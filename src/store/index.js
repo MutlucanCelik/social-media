@@ -1,11 +1,12 @@
 
 import { createStore } from 'vuex'; // Vuex'i içe aktarın
-import { getWithAuth,postWithAuth,postItems,updateUser } from '../utils/service/HttpService';
+import { getWithAuth,postWithAuth,postItems } from '../utils/service/HttpService';
 import { ref } from 'vue'
 
 export default createStore({
     state: {
       user : null,
+      userImage: null,
       posts : [],
       comments: []
     },
@@ -27,7 +28,7 @@ export default createStore({
         year = date.value.getFullYear();
         date.value =  day + '.' + mounth + '.' + year;
         user.created_at = date.value
-      
+        state.userImage = user.profile_photo_url
         state.user = user;
       },
       SET_POSTS(state,post){
@@ -50,26 +51,14 @@ export default createStore({
         try {
           const token = "Bearer " + localStorage.getItem("tokenKey")
           const username = localStorage.getItem("username")
-          const user = await getWithAuth(`users/get/${username}`, token);
+          const user = await getWithAuth(`users/get/${username}`, token)
+          user.profile_photo_url = "http://127.0.0.1:8000"+ user.profile_photo_url
           commit('SET_USER', user);
         } catch (error) {
           console.error('There has been a problem fetching the user:', error.message);
         }
       },
     
-      async postUser({ commit }, body) {
-        try {
-          const token = "Bearer " + localStorage.getItem("tokenKey");
-          const formData = new FormData();
-          for (const key in body) {
-            formData.append(key, body[key]);
-          }
-          const updatedUser = await updateUser(`profile/update`, formData, token);
-          commit('SET_USER', updatedUser);
-        } catch (error) {
-          console.error('There has been a problem updating the user:', error.message);
-        }
-      },
 
       //Post işlemleri
       async createPost({ commit }, body) {
@@ -87,6 +76,7 @@ export default createStore({
           const posts = await postItems(`posts/user`, token);
           posts.data.posts.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
           posts.data.posts.forEach(item => {
+            item.user.profile_photo_url = "http://127.0.0.1:8000"+ item.user.profile_photo_url
             const currentDate = new Date();
             let date = new Date(item.created_at)
             const differenceInMilliseconds = currentDate - date;

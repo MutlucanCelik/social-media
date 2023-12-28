@@ -7,6 +7,7 @@ import Profil from '@/views/Profil.vue'
 import Message from '@/views/Message.vue'
 import Settings from '@/views/Settings.vue'
 import Notifications from '@/views/Notifications.vue'
+import Reports from '@/views/Reports.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -40,6 +41,11 @@ const router = createRouter({
       path: '/message',
       name: 'Message',
       component: Message
+    },
+    {
+      path: '/reports',
+      name: 'Reports',
+      component: Reports
     },
     {
       path: '/settings',

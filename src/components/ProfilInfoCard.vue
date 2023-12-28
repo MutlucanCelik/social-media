@@ -96,4 +96,8 @@ export default {
 }
 </script>
 
-<style></style>
+<style >
+canvas{
+  width: 27rem !important;
+ }
+</style>

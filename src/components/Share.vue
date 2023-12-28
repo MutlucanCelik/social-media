@@ -3,7 +3,7 @@
     <div class="d-flex mb-3">
       <div class="avatar avatar-xs me-2">
         <a href="#">
-          <img class="avatar-img rounded-circle" :src="avatar" alt="" />
+          <img class="avatar-img rounded-circle" :src="userImage" alt="" />
         </a>
       </div>
 
@@ -45,14 +45,14 @@
 </template>
 
 <script>
-import {  ref } from 'vue'
+import {  computed, ref } from 'vue'
 import { useStore } from 'vuex'
 import avatar from '@/assets/images/avatar/user.jpeg'
 export default {
   setup() {
     const store = useStore() // Vuex store'u alın
     let post_text = ref("")
-    let media_share = ref("")
+    const userImage = computed(() => store.state.userImage || avatar)
 
 
     const handleAddImage = () => {
@@ -78,8 +78,8 @@ export default {
     return {
       handleSubmit,
       post_text ,
-      avatar,
-      handleAddImage
+      handleAddImage,
+      userImage
     }
   }
 }

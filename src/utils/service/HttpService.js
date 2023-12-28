@@ -54,25 +54,6 @@ export const postWithAuth = (url, body,token) => {
 
     return request
 }
-export const updateUser = (url, formData, token) => {
-  return fetch(`http://127.0.0.1:8000/api/${url}`, {
-    method: "POST",
-    headers: {
-      "Authorization": token,
-    },
-    body: formData,
-  })
-  .then((response) => {
-    if (!response.ok) {
-      console.log('Kullanıcı Bilgisi gönderilmedi')
-      return;
-    }
-    return response.blob();
-  })
-  .catch((error) => {
-    console.error('Postta Bir sorun oluştu:', error);
-  });
-};
 export const postItems = (url, token) => {
   var request = fetch(`http://127.0.0.1:8000/api/${url}`,  {
       method: "POST", 

@@ -13,9 +13,9 @@
                     <h1 class="h5 card-title">Kullanıcı Bilgileri</h1>
                   </div>
                   <div class="d-flex justify-content-center align-items-center">
-                    <div @click="hadleFileEdit" class="img-container rounded-circle">
+                    <div @click="handleFileEdit" class="img-container">
                       <img
-                        class="rounded-circle"
+                        id="modal_image"
                         :src="currentUser.profile_photo_url"
                         alt="img"
                       />
@@ -30,7 +30,7 @@
                       <div class="col-lg-12 d-none">
                         <label class="form-label">Resim</label>
                         <input
-                          
+                          @change="handleFileChange"
                           id="img_input"
                           type="file"
                           class="form-control"
@@ -172,6 +172,7 @@ import moment from 'moment'
 import { useStore } from 'vuex'
 import { onMounted, ref } from 'vue'
 import avatar from '@/assets/images/avatar/user.jpeg'
+import { useRouter } from 'vue-router'
 export default {
   name: 'Settings',
 
@@ -184,6 +185,7 @@ export default {
 
   setup() {
     const store = useStore() // Vuex store'u alın
+    const router = useRouter()
     let currentUser = ref({})
     let password = ref("");
     let password_confirmation = ref("");
@@ -203,33 +205,80 @@ export default {
       }
       
     })
+    const handleFileChange = (event) => {
+      const selectedFile = event.target.files[0]; // Seçilen dosya
+      const reader = new FileReader();
+
+      reader.onload = () => {
+        const previewImage = document.getElementById('modal_image'); // ID ile img etiketini seçin
+        if (previewImage) {
+          previewImage.src = reader.result; // Seçilen resmin URL'sini img etiketine ata
+        }
+      };
+
+      if (selectedFile) {
+        reader.readAsDataURL(selectedFile); // Dosya URL'sini okur
+      }
+    }
 
     const handleSettingSubmit = () => {
-      let formData = {
-        first_name: currentUser.value.first_name,
-        last_name: currentUser.value.last_name,
-        username: currentUser.value.username,
-        date_of_birth: currentUser.value.date_of_birth,
-        title: currentUser.value.title,
-        description: currentUser.value.description,
-      }
-      if(document.getElementById("img_input").files[0]){
-        formData.profile_photo = document.getElementById("img_input").files[0]
-      }
-      if(currentUser.value.gender){
-        formData.gender = currentUser.value.gender
-      }
-      store.dispatch('postUser', formData)
+        const token = "Bearer " + localStorage.getItem("tokenKey");
+        let data = {
+          first_name: currentUser.value.first_name,
+          last_name: currentUser.value.last_name,
+          username: currentUser.value.username,
+          date_of_birth: currentUser.value.date_of_birth,
+          title: currentUser.value.title,
+          description: currentUser.value.description,
+        }
+        if(document.getElementById("img_input").files[0]){
+        data.profile_photo = document.getElementById("img_input").files[0]
+        }
+        if(currentUser.value.gender){
+          data.gender = currentUser.value.gender
+        }
+        const formData = new FormData();
+          for (const key in data) {
+            formData.append(key, data[key]);
+          }
+        fetch(`http://127.0.0.1:8000/api/profile/update`, {
+            method: "POST",
+            headers: {
+              "Authorization": token,
+            },
+            body: formData,
+          })
+          .then((response) => {
+            console.log(response)
+            if (response.ok) {
+              localStorage.setItem('username', currentUser.value.username)
+              $('#toast').toast('show')
+              router.push("/settings")
+              return response.blob();
+            }else{
+              console.log("HATA : Güncelleme yapılamadı")
+            }
+            
+          }).then(async () => {
+            await store.dispatch('getUser')
+            if (store.getters.currentUser) {
+              currentUser.value = store.getters.currentUser
+              currentUser.value.date_of_birth = moment(
+                currentUser.value.date_of_birth,
+                'DD.MM.YYYY'
+              ).format('YYYY-MM-DD')
+              console.log(currentUser.value)
+              currentUser.value.profile_photo_url = currentUser.value.profile_photo_url || avatar
+              currentUser.value.gender = currentUser.value.gender || ''
+              
+            }
+          })
+          .catch((error) => {
+            console.error('Postta Bir sorun oluştu:', error);
+          });
+        };
       
-        .then(() => {
-          localStorage.setItem('username', currentUser.value.username)
-          $('#toast').toast('show')
-       
-        })
-        .catch((error) => {
-          console.error('Post işlemi sırasında bir hata oluştu:', error)
-        })
-    }
+    
     const handeleResetPassword = () => {
       let formData = {
         email : currentUser.value.email,
@@ -266,7 +315,7 @@ export default {
       const passwordInput = document.getElementById(input)
       const icon = document.getElementById(i)
       if (passwordInput.type === 'text') {
-        passwordInput.type = 'password';
+        passwordInput.type = 'password';  
         icon.classList.add("fa-eye-slash")
         icon.classList.remove("fa-eye")
       } 
@@ -276,7 +325,7 @@ export default {
         icon.classList.remove("fa-eye-slash")
       }
     }
-    const hadleFileEdit = () => {
+    const handleFileEdit = () => {
       const imgInput = document.getElementById('img_input')
       imgInput.click()
     }
@@ -286,7 +335,8 @@ export default {
     return {
       currentUser,
       handleSettingSubmit,
-      hadleFileEdit,
+      handleFileEdit,
+      handleFileChange,
       handeleResetPassword,
       password,
       password_confirmation,
@@ -298,11 +348,19 @@ export default {
 
 <style scoped>
 .img-container {
-  width: 10rem;
+  width: 12rem;
+  height: 12rem;
+  border-radius: 50%;
   cursor: pointer;
   position: relative;
   font-size: 1.2rem;
   font-family: Arial, Helvetica, sans-serif;
+
+}
+.img-container img{
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
 }
 .img-modal {
   width: 100%;

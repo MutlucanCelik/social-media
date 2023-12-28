@@ -57,6 +57,11 @@
               <i class="bi bi-gear-fill fs-6"> </i>
             </RouterLink>
           </li>
+          <li class="nav-item ms-2">
+            <RouterLink class="nav-link icon-md btn btn-light p-0" :to="{ name: 'Reports' }">
+              <i class="bi bi-bar-chart-fill fs-6"> </i>
+            </RouterLink>
+          </li>
           <li class="nav-item dropdown ms-2">
             <a
               class="nav-link icon-md btn btn-light p-0"
@@ -91,7 +96,7 @@
                         <div class="avatar text-center d-none d-sm-inline-block">
                           <img
                             class="avatar-img rounded-circle"
-                            :src="avatar"
+                            :src="userImage"
                             alt=""
                           />
                         </div>
@@ -130,7 +135,7 @@
               data-bs-toggle="dropdown"
               aria-expanded="false"
             >
-              <img class="avatar-img rounded-2" :src="avatar" alt="" />
+              <img class="avatar-img rounded-2" :src="userImage" alt="" />
             </a>
             <ul
               class="dropdown-menu dropdown-animation dropdown-menu-end pt-3 pb-0 small me-md-n3"
@@ -141,7 +146,7 @@
                   <div class="avatar me-3">
                     <img
                       class="avatar-img rounded-circle"
-                      :src="avatar"
+                      :src="userImage"
                       alt="avatar"
                     />
                   </div>
@@ -256,9 +261,14 @@
 <script>
 import { useRouter } from 'vue-router';
 import avatar from '@/assets/images/avatar/user.jpeg'
+import { computed } from 'vue';
+import { useStore } from 'vuex';
 export default {
   setup() {
     const router = useRouter();
+    const store = useStore();
+    const userImage = computed(() => store.state.userImage || avatar)
+
     const handleLogout = () => {
       console.log('Başarıyla Çıkış Yapıldı!')
       localStorage.removeItem('tokenKey');
@@ -269,7 +279,7 @@ export default {
 
     return {
       handleLogout,
-      avatar
+      userImage
     }
   }
 }
