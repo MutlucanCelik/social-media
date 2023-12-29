@@ -76,7 +76,7 @@ export default createStore({
           const posts = await postItems(`posts/user`, token);
           posts.data.posts.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
           posts.data.posts.forEach(item => {
-            item.user.profile_photo_url = "http://127.0.0.1:8000"+ item.user.profile_photo_url
+            item.user.profile_photo_url = item.user.profile_photo_url ? "http://127.0.0.1:8000"+ item.user.profile_photo_url : null
             const currentDate = new Date();
             let date = new Date(item.created_at)
             const differenceInMilliseconds = currentDate - date;
