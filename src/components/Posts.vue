@@ -80,7 +80,7 @@
               </button>
             </form>
           </div>
-          <ul class="comment-wrap list-unstyled">
+          <ul v-if="posts.comments" class="comment-wrap list-unstyled">
             <li class="comment-item">
               <div class="d-flex position-relative">
                 <div class="avatar avatar-xs">
@@ -98,8 +98,7 @@
                       <small class="ms-2">5hr</small>
                     </div>
                     <p class="small mb-0">
-                      Lorem ipsum dolor sit amet consectetur adipisicing elit. Numquam incidunt
-                      aliquam animi enim soluta laboriosam.
+                     {{ posts.comments.comment_text }}
                     </p>
                   </div>
                   <ul class="nav nav-divider py-2 small">
@@ -115,71 +114,7 @@
                   </ul>
                 </div>
               </div>
-              <ul class="comment-item-nested list-unstyled">
-                <li class="comment-item">
-                  <div class="d-flex">
-                    <div class="avatar avatar-xs">
-                      <a href="#!"
-                        ><img
-                          class="avatar-img rounded-circle"
-                          src="../assets/images/avatar/06.jpg"
-                          alt=""
-                      /></a>
-                    </div>
-                    <div class="ms-2">
-                      <div class="bg-light p-3 rounded">
-                        <div class="d-flex justify-content-between">
-                          <h6 class="mb-1"><a href="#!"> Ahmet Polat </a></h6>
-                          <small class="ms-2">2hr</small>
-                        </div>
-                        <p class="small mb-0">
-                          Lorem ipsum dolor sit amet consectetur adipisicing elit. Atque animi
-                          possimus a molestiae reprehenderit officia.
-                        </p>
-                      </div>
-                      <ul class="nav nav-divider py-2 small">
-                        <li class="nav-item">
-                          <a class="nav-link" href="#!"> Beğen (5)</a>
-                        </li>
-                        <li class="nav-item">
-                          <a class="nav-link" href="#!"> Cevap ver</a>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                </li>
-                <li class="comment-item">
-                  <div class="d-flex">
-                    <div class="avatar avatar-story avatar-xs">
-                      <a href="#!"
-                        ><img
-                          class="avatar-img rounded-circle"
-                          src="../assets/images/avatar/07.jpg"
-                          alt=""
-                      /></a>
-                    </div>
-                    <div class="ms-2">
-                      <div class="bg-light p-3 rounded">
-                        <div class="d-flex justify-content-between">
-                          <h6 class="mb-1"><a href="#!"> Yağmur Sayhan </a></h6>
-                          <small class="ms-2">15min</small>
-                        </div>
-                        <p class="small mb-0">
-                          Lorem ipsum dolor sit amet consectetur adipisicing elit. Maiores, earum?
-                        </p>
-                      </div>
-                      <ul class="nav nav-divider py-2 small">
-                        <li class="nav-item">
-                          <a class="nav-link" href="#!"> Beğen</a>
-                        </li>
-                        <li class="nav-item">
-                          <a class="nav-link" href="#!"> Cevap ver</a>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                </li>
-              </ul>
+             
               <a
                 href="#!"
                 role="button"
@@ -189,41 +124,7 @@
               >
               </a>
             </li>
-            <li class="comment-item">
-              <div class="d-flex">
-                <div class="avatar avatar-xs">
-                  <a href="#!"
-                    ><img
-                      class="avatar-img rounded-circle"
-                      src="../assets/images/avatar/05.jpg"
-                      alt=""
-                  /></a>
-                </div>
-                <div class="ms-2">
-                  <div class="bg-light p-3 rounded">
-                    <div class="d-flex justify-content-between">
-                      <h6 class="mb-1"><a href="#!"> Büşra Gök </a></h6>
-                      <small class="ms-2">4min</small>
-                    </div>
-                    <p class="small mb-0">
-                      Lorem ipsum dolor sit, amet consectetur adipisicing elit. Laborum numquam, optio
-                      qui esse quod vitae?
-                    </p>
-                  </div>
-                  <ul class="nav nav-divider pt-2 small">
-                    <li class="nav-item">
-                      <a class="nav-link" href="#!"> Beğen (1)</a>
-                    </li>
-                    <li class="nav-item">
-                      <a class="nav-link" href="#!"> Cevap ver</a>
-                    </li>
-                    <li class="nav-item">
-                      <a class="nav-link" href="#!"> 6 Yanıtı görüntüle</a>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </li>
+            
           </ul>
         </div>
       </div>
@@ -243,20 +144,16 @@ export default {
     const store = useStore() // Vuex store'u alın
     let posts = computed(() => {
       store.state.posts.forEach(post => {
-        console.log(post.user.profile_photo_url)
         post.user.profile_photo_url = post.user.profile_photo_url || avatar
       });
       return store.state.posts
     })
-    let comments = computed(() => store.state.comments)
     let comment = ref("")
 
     onMounted(async () => {
-      await store.dispatch('getComment')
       await store.dispatch('getPosts')
     })
     
-
     const removePost = (id) =>{
       const token = "Bearer " + localStorage.getItem("tokenKey")
       fetch(`http://127.0.0.1:8000/api/posts/${id}/delete`, {
@@ -307,8 +204,7 @@ export default {
       posts,
       removePost,avatar,
       createComment,
-      comment,
-      comments
+      comment
     }
   }
 }

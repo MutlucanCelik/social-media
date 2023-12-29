@@ -60,14 +60,14 @@
                   <div class="vr"></div>
 
                   <div>
-                    <h6 class="mb-0">2.5K</h6>
+                    <h6 class="mb-0">0</h6>
                     <small>Takipçi</small>
                   </div>
 
                   <div class="vr"></div>
 
                   <div>
-                    <h6 class="mb-0">365</h6>
+                    <h6 class="mb-0">0</h6>
                     <small>Takip</small>
                   </div>
                 </div>

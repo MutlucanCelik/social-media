@@ -52,7 +52,7 @@ export default createStore({
           const token = "Bearer " + localStorage.getItem("tokenKey")
           const username = localStorage.getItem("username")
           const user = await getWithAuth(`users/get/${username}`, token)
-          user.profile_photo_url = "http://127.0.0.1:8000"+ user.profile_photo_url
+          user.profile_photo_url = user.profile_photo_url ? "http://127.0.0.1:8000"+ user.profile_photo_url : null
           commit('SET_USER', user);
         } catch (error) {
           console.error('There has been a problem fetching the user:', error.message);
@@ -91,7 +91,7 @@ export default createStore({
             item.created_at = minutesPassed
             item.comments = state.comments
           })
-          
+          console.log(posts.data.posts)
           commit('GET_POSTS', posts.data.posts);
         } catch (error) {
           throw new Error('Hata : ',error.message);
